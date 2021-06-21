@@ -8,8 +8,13 @@ const form = document.getElementById("form")
 
 
 const socket = io('http://localhost:3000')
+const userSocket = io('http://localhost:3000/user', { auth: { token: "Test" } })
 
-socket.on('connect', () => {
+userSocket.on('connect_error', err => {
+    displaymessage(err)
+})
+
+userSocket.on('connect', () => {
     displaymessage(`You connected with id: ${socket.id}`)
 })
 

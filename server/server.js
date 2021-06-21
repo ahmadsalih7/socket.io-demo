@@ -5,6 +5,23 @@ const io = require('socket.io')(3000, {
     }
 })
 
+const userIo = io.of('/user')
+userIo.on('connection', socket => {
+    console.log('connected to namespace with username ' + socket.username);
+})
+
+userIo.use((socket, next) => {
+    if (socket.handshake.auth.token) {
+        socket.username = getUsernameFromToken(socket.handshake.auth.token)
+        next()
+    } else {
+        next(new Error('Please send token'))
+    }
+})
+function getUsernameFromToken(token) {
+    return token
+}
+
 io.on('connection', socket => {
     console.log(socket.id);
     socket.on('send-message', (message, room) => {
